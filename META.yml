@@ -15,25 +15,34 @@ name: Module-Packaged-Generator
 provides:
   Module::Packaged::Generator:
     file: lib/Module/Packaged/Generator.pm
-    version: 1.100090
+    version: 1.100091
   Module::Packaged::Generator::Distribution:
     file: lib/Module/Packaged/Generator/Distribution.pm
-    version: 1.100090
+    version: 1.100091
   Module::Packaged::Generator::Distribution::Mandriva:
     file: lib/Module/Packaged/Generator/Distribution/Mandriva.pm
-    version: 1.100090
+    version: 1.100091
+  Module::Packaged::Generator::Module:
+    file: lib/Module/Packaged/Generator/Module.pm
+    version: 1.100091
 requires:
   DBI: 0
   English: 0
   File::Find: 0
+  File::HomeDir: 0
   List::Util: 0
   Module::Build: 0
   Module::Pluggable: 0
+  Moose: 0
+  MooseX::Has::Sugar: 0
+  Parse::CPAN::Packages: 0
+  Path::Class: 0
   Term::ProgressBar::Quiet: 0
   Test::More: 0
   base: 0
   perl: 5.008
+  relative: 0
 resources:
   homepage: http://search.cpan.org/dist/Module-Packaged-Generator
   repository: http://github.com/jquelin/module-packaged-generator
-version: 1.100090
+version: 1.100091

@@ -11,9 +11,10 @@ use strict;
 use warnings;
 
 package Module::Packaged::Generator::Distribution::Mandriva;
-our $VERSION = '1.100090';
+our $VERSION = '1.100091';
 # ABSTRACT: mandriva driver to fetch available modules
 
+use relative -to => 'Module::Packaged::Generator', -aliased => qw{ Module };
 use base qw{ Module::Packaged::Generator::Distribution };
 
 sub match { -f '/etc/mandriva-release'; }
@@ -33,8 +34,11 @@ sub list {
         my $pkgname = $pkg->name;
         foreach my $p ( @provides ) {
             next unless $p =~ /^perl\(([^)]+)\)(\[== (.*)\])?$/;
-            my ($module, $version) = ($1, $3);
-            push @modules, [ $module, $version, $pkgname ];
+            push @modules, Module->new( {
+                name    => $1,
+                version => $3,
+                pkgname => $pkgname,
+            } );
         }
     } );
     return @modules;
@@ -53,12 +57,14 @@ Module::Packaged::Generator::Distribution::Mandriva - mandriva driver to fetch a
 
 =head1 VERSION
 
-version 1.100090
+version 1.100091
 
 =head1 DESCRIPTION
 
 This module is the L<Module::Packaged::Generator::Distribution> driver
 for Mandriva.
+
+=for Pod::Coverage::TrustPod Module
 
 =head1 AUTHOR
 

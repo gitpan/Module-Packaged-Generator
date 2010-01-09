@@ -11,7 +11,7 @@ use strict;
 use warnings;
 
 package Module::Packaged::Generator::Distribution;
-our $VERSION = '1.100090';
+our $VERSION = '1.100091';
 # ABSTRACT: base class for all distribution drivers
 
 # -- public methods
@@ -34,7 +34,7 @@ Module::Packaged::Generator::Distribution - base class for all distribution driv
 
 =head1 VERSION
 
-version 1.100090
+version 1.100091
 
 =head1 DESCRIPTION
 

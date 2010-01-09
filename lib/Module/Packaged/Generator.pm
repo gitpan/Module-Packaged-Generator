@@ -11,7 +11,7 @@ use strict;
 use warnings;
 
 package Module::Packaged::Generator;
-our $VERSION = '1.100090';
+our $VERSION = '1.100091';
 # ABSTRACT: build list of modules packaged by a linux distribution
 
 use DBI;
@@ -54,7 +54,11 @@ sub create_db {
             pkgname     TEXT NOT NULL
         );
     ");
-    my $sth = $dbh->prepare("INSERT INTO module (module, version, pkgname) VALUES (?,?,?);");
+    my $sth = $dbh->prepare("
+        INSERT
+            INTO   module (module, version, dist, pkgname)
+            VALUES        (?,?,?,?);
+    ");
     my $prefix = "inserting modules in db";
     my $progress = Term::ProgressBar->new( {
         count     => scalar(@modules),
@@ -65,7 +69,7 @@ sub create_db {
     my $next_update = 0;
     foreach my $i ( 0 .. $#modules ) {
         my $m = $modules[$i];
-        $sth->execute(@$m);
+        $sth->execute($m->name, $m->version, $m->dist, $m->pkgname);
         $next_update = $progress->update($_)
             if $i >= $next_update;
     }
@@ -93,7 +97,7 @@ Module::Packaged::Generator - build list of modules packaged by a linux distribu
 
 =head1 VERSION
 
-version 1.100090
+version 1.100091
 
 =head1 DESCRIPTION
 

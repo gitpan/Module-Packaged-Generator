@@ -2,6 +2,7 @@ Build.PL
 Changes
 LICENSE
 MANIFEST
+MANIFEST.SKIP
 META.yml
 README
 bin/pkgcpan
@@ -9,6 +10,7 @@ dist.ini
 lib/Module/Packaged/Generator.pm
 lib/Module/Packaged/Generator/Distribution.pm
 lib/Module/Packaged/Generator/Distribution/Mandriva.pm
+lib/Module/Packaged/Generator/Module.pm
 t/00-compile.t
 t/author-critic.t
 t/release-meta-yaml.t
