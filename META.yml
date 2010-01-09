@@ -1,0 +1,39 @@
+---
+abstract: 'build list of modules packaged by a linux distribution'
+author:
+  - 'Jerome Quelin'
+build_requires:
+  Module::Build: 0.35
+configure_requires:
+  Module::Build: 0.35
+generated_by: 'Dist::Zilla version 1.093400'
+license: perl
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: 1.4
+name: Module-Packaged-Generator
+provides:
+  Module::Packaged::Generator:
+    file: lib/Module/Packaged/Generator.pm
+    version: 1.100090
+  Module::Packaged::Generator::Distribution:
+    file: lib/Module/Packaged/Generator/Distribution.pm
+    version: 1.100090
+  Module::Packaged::Generator::Distribution::Mandriva:
+    file: lib/Module/Packaged/Generator/Distribution/Mandriva.pm
+    version: 1.100090
+requires:
+  DBI: 0
+  English: 0
+  File::Find: 0
+  List::Util: 0
+  Module::Build: 0
+  Module::Pluggable: 0
+  Term::ProgressBar::Quiet: 0
+  Test::More: 0
+  base: 0
+  perl: 5.008
+resources:
+  homepage: http://search.cpan.org/dist/Module-Packaged-Generator
+  repository: http://github.com/jquelin/module-packaged-generator
+version: 1.100090

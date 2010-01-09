@@ -1,0 +1,16 @@
+Build.PL
+Changes
+LICENSE
+MANIFEST
+META.yml
+README
+bin/pkgcpan
+dist.ini
+lib/Module/Packaged/Generator.pm
+lib/Module/Packaged/Generator/Distribution.pm
+lib/Module/Packaged/Generator/Distribution/Mandriva.pm
+t/00-compile.t
+t/author-critic.t
+t/release-meta-yaml.t
+t/release-pod-coverage.t
+t/release-pod-syntax.t
