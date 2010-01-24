@@ -11,7 +11,7 @@ use strict;
 use warnings;
 
 package Module::Packaged::Generator::Module;
-our $VERSION = '1.100091';
+our $VERSION = '1.100240';
 # ABSTRACT: a class representing a perl module
 
 use File::HomeDir qw{ my_home };
@@ -22,6 +22,7 @@ use Path::Class;
 
 
 # -- attributes
+
 
 has name    => ( ro, isa=>'Str', required          );
 has version => ( ro, isa=>'Maybe[Str]'             );
@@ -58,13 +59,39 @@ Module::Packaged::Generator::Module - a class representing a perl module
 
 =head1 VERSION
 
-version 1.100091
+version 1.100240
 
 =head1 DESCRIPTION
 
 This module represent a Perl module with various attributes. It
 should be used by the distribution drivers fetching the list of
 available modules.
+
+Note that for C<dist> to return a meaningful result, it needs the
+L<CPANPLUS> index, which should exist if you already used CPANPLUS at
+least once.
+
+=head1 ATTRIBUTES
+
+=head2 name
+
+This is the module name, such as C<Foo::Bar::Baz>. It is required.
+
+=head2 version
+
+This is the module version. It isn't mandatory.
+
+=head2 dist
+
+This is the CPAN distribution the module is part of. It's lazily built
+on first access, taken from the C<02packages.details.txt.gz> from
+L<CPANPLUS> work directory. It will be eg C<Foo-Bar>.
+
+=head2 pkgname
+
+This is the name of the package holding this module in the Linux
+distribution. Chances are that it looks like C<perl-Foo-Bar> on
+Mandriva, C<libfoo-bar-perl> on Debian, etc. It's required.
 
 =head1 AUTHOR
 
@@ -81,3 +108,4 @@ the same terms as the Perl 5 programming language system itself.
 
 
 __END__
+

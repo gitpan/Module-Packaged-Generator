@@ -11,5 +11,95 @@
 use strict;
 use warnings;
 
+use File::Spec::Functions qw{ catdir updir };
+use Term::ProgressBar::Quiet;
+
+# for dev purposes
+use FindBin qw{ $Bin };
+use lib catdir( $Bin, updir, 'lib' );
+
+
 use Module::Packaged::Generator;
-Module::Packaged::Generator->create_db;
+
+
+# -- main program
+
+# try to find a suitable driver
+my $driver = Module::Packaged::Generator->find_driver;
+if ( not defined $driver ) {
+    my $msg = join "\n",
+        "no driver found for this machine distribution.\n",
+        "list of existing distribution drivers:",
+        map { ( my $d = $_ ) =~ s/^.*:://; "\t$d" }
+        Module::Packaged::Generator->all_drivers;
+    die "$msg\n\n";
+}
+print "found a distribution driver: $driver\n";
+
+
+# create the database
+( my $dist = $driver ) =~ s/^.*:://;
+my $file = "cpan_$dist.db";
+my $dbh  = Module::Packaged::Generator->create_db($file);
+
+
+# fetch the list of available perl modules
+my @modules = $driver->list;
+
+
+# insert the modules in the database
+my $sth = $dbh->prepare("
+    INSERT
+        INTO   module (module, version, dist, pkgname)
+        VALUES        (?,?,?,?);
+");
+my $prefix = "inserting modules in db";
+my $progress = Term::ProgressBar->new( {
+    count     => scalar(@modules),
+    bar_width => 50,
+    remove    => 1,
+    name      => $prefix,
+} );
+my $next_update = 0;
+foreach my $i ( 0 .. $#modules ) {
+    my $m = $modules[$i];
+    $sth->execute($m->name, $m->version, $m->dist, $m->pkgname);
+    $next_update = $progress->update($_)
+        if $i >= $next_update;
+}
+$progress->update( scalar(@modules) );
+$sth->finish;
+print "${prefix}: done\n";
+
+
+# create indexes in the db to make it faster
+print "creating indexes: modules ";
+$dbh->do("CREATE INDEX module__module  on module ( module  );");
+print "dists ";
+$dbh->do("CREATE INDEX module__dist    on module ( dist    );");
+print "packages ";
+$dbh->do("CREATE INDEX module__pkgname on module ( pkgname );");
+print "done\n";
+
+
+# all's done, close the db
+$dbh->disconnect;
+
+exit;
+__END__
+
+=head1 NAME
+
+pkgcpan - create db of available Perl modules
+
+
+=head1 SYNOPSIS
+
+    pkgcpan
+
+
+=head1 DESCRIPTION
+
+This script will create and populate a sqlite database with the
+available Perl modules for your distribution.
+

@@ -11,11 +11,16 @@ use strict;
 use warnings;
 
 package Module::Packaged::Generator::Distribution::Mandriva;
-our $VERSION = '1.100091';
+our $VERSION = '1.100240';
 # ABSTRACT: mandriva driver to fetch available modules
 
+use Moose;
+
 use relative -to => 'Module::Packaged::Generator', -aliased => qw{ Module };
-use base qw{ Module::Packaged::Generator::Distribution };
+
+extends 'Module::Packaged::Generator::Distribution';
+
+# -- public methods
 
 sub match { -f '/etc/mandriva-release'; }
 
@@ -44,8 +49,6 @@ sub list {
     return @modules;
 }
 
-
-
 1;
 
 
@@ -57,7 +60,7 @@ Module::Packaged::Generator::Distribution::Mandriva - mandriva driver to fetch a
 
 =head1 VERSION
 
-version 1.100091
+version 1.100240
 
 =head1 DESCRIPTION
 
@@ -81,3 +84,4 @@ the same terms as the Perl 5 programming language system itself.
 
 
 __END__
+

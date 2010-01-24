@@ -3,10 +3,10 @@ abstract: 'build list of modules packaged by a linux distribution'
 author:
   - 'Jerome Quelin'
 build_requires:
-  Module::Build: 0.35
+  Module::Build: 0.3601
 configure_requires:
-  Module::Build: 0.35
-generated_by: 'Dist::Zilla version 1.093400'
+  Module::Build: 0.3601
+generated_by: 'Dist::Zilla version 1.100160'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -15,23 +15,25 @@ name: Module-Packaged-Generator
 provides:
   Module::Packaged::Generator:
     file: lib/Module/Packaged/Generator.pm
-    version: 1.100091
+    version: 1.100240
   Module::Packaged::Generator::Distribution:
     file: lib/Module/Packaged/Generator/Distribution.pm
-    version: 1.100091
+    version: 1.100240
   Module::Packaged::Generator::Distribution::Mandriva:
     file: lib/Module/Packaged/Generator/Distribution/Mandriva.pm
-    version: 1.100091
+    version: 1.100240
   Module::Packaged::Generator::Module:
     file: lib/Module/Packaged/Generator/Module.pm
-    version: 1.100091
+    version: 1.100240
 requires:
   DBI: 0
   English: 0
   File::Find: 0
   File::HomeDir: 0
+  File::Spec::Functions: 0
+  File::Temp: 0
+  FindBin: 0
   List::Util: 0
-  Module::Build: 0
   Module::Pluggable: 0
   Moose: 0
   MooseX::Has::Sugar: 0
@@ -39,10 +41,9 @@ requires:
   Path::Class: 0
   Term::ProgressBar::Quiet: 0
   Test::More: 0
-  base: 0
   perl: 5.008
   relative: 0
 resources:
   homepage: http://search.cpan.org/dist/Module-Packaged-Generator
   repository: http://github.com/jquelin/module-packaged-generator
-version: 1.100091
+version: 1.100240

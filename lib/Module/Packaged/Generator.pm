@@ -11,7 +11,7 @@ use strict;
 use warnings;
 
 package Module::Packaged::Generator;
-our $VERSION = '1.100091';
+our $VERSION = '1.100240';
 # ABSTRACT: build list of modules packaged by a linux distribution
 
 use DBI;
@@ -20,30 +20,25 @@ use Module::Pluggable
     require     => 1,
     sub_name    => 'dists',
     search_path => __PACKAGE__.'::Distribution';
-use Term::ProgressBar::Quiet;
 
 
 # -- public methods
 
 
-sub create_db {
+sub all_drivers { return $_[0]->dists; }
+
+
+
+sub find_driver {
     my $self = shift;
+    return first { $_->match } $self->dists;
+}
 
-    # try to find a module than can provide the list of modules
-    my $driver = first { $_->match } $self->dists;
-    if ( not defined $driver ) {
-        warn "no driver found for this machine distribution.\n\n",
-            "list of existing distribution drivers:\n",
-            map { ( my $d = $_ ) =~ s/^.*:://; "\t$d\n" } $self->dists;
-        die "\n";
-    }
 
-    print "found a distribution driver: $driver\n";
-    ( my $dist = $driver ) =~ s/^.*:://;
-    my @modules = $driver->list;
 
-    # save modules in a db
-    my $file = "cpan_$dist.db";
+sub create_db {
+    my ($self, $file) = @_;
+
     unlink($file) if -f $file;
     my $dbh = DBI->connect("dbi:SQLite:dbname=$file", '', '');
     $dbh->do("
@@ -54,37 +49,9 @@ sub create_db {
             pkgname     TEXT NOT NULL
         );
     ");
-    my $sth = $dbh->prepare("
-        INSERT
-            INTO   module (module, version, dist, pkgname)
-            VALUES        (?,?,?,?);
-    ");
-    my $prefix = "inserting modules in db";
-    my $progress = Term::ProgressBar->new( {
-        count     => scalar(@modules),
-        bar_width => 50,
-        remove    => 1,
-        name      => $prefix,
-    } );
-    my $next_update = 0;
-    foreach my $i ( 0 .. $#modules ) {
-        my $m = $modules[$i];
-        $sth->execute($m->name, $m->version, $m->dist, $m->pkgname);
-        $next_update = $progress->update($_)
-            if $i >= $next_update;
-    }
-    $progress->update( scalar(@modules) );
-    $sth->finish;
-    print "${prefix}: done\n";
-    print "creating indexes: modules ";
-    $dbh->do("CREATE INDEX module__module  on module ( module  );");
-    print "dists ";
-    $dbh->do("CREATE INDEX module__dist    on module ( dist    );");
-    print "packages ";
-    $dbh->do("CREATE INDEX module__pkgname on module ( pkgname );");
-    print "done\n";
-    $dbh->disconnect;
+    return $dbh;
 }
+
 
 1;
 
@@ -97,13 +64,13 @@ Module::Packaged::Generator - build list of modules packaged by a linux distribu
 
 =head1 VERSION
 
-version 1.100091
+version 1.100240
 
 =head1 DESCRIPTION
 
-This module will fetch modules available as native linux distribution
-package, and wraps that in a sqlite database. This then allow people to
-do analysis, draw CPANTS metrics from it or whatever.
+This module alows to fetch modules available as native Linux (or BSD)
+distribution packages, and wraps them in a sqlite database. This allows
+people to do analysis, draw CPANTS metrics from it or whatever.
 
 Of course, running the utility shipped in this dist will only create the
 database for the current distribution. But that's not our job to do
@@ -111,10 +78,21 @@ crazy manipulation with this data, we just provide the data :-)
 
 =head1 METHODS
 
-=head2 create_db();
+=head2 my @drivers = Module::Packaged::Generator->all_drivers();
 
-Fetch the list of available modules, and creates a sqlite database with
-this information.
+Return a list of all available drivers supporting a distribution. The
+list is a list of module names (strings) such as
+L<Module::Packaged::Generator::Mandriva>.
+
+=head2 my $driver = Module::Packaged::Generator->find_driver;
+
+Return a driver that can be used on the current machine, or undef if no
+suitable driver was found.
+
+=head2 my $dbh = Module::Packaged::Generator->create_db($file);
+
+Creates a sqlite database with the correct schema. Remove the previous
+C<$file> if it exists. Return the handler on the opened database.
 
 =head1 SEE ALSO
 
@@ -159,3 +137,4 @@ the same terms as the Perl 5 programming language system itself.
 
 
 __END__
+

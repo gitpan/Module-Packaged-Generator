@@ -11,7 +11,7 @@ use strict;
 use warnings;
 
 package Module::Packaged::Generator::Distribution;
-our $VERSION = '1.100091';
+our $VERSION = '1.100240';
 # ABSTRACT: base class for all distribution drivers
 
 # -- public methods
@@ -34,7 +34,7 @@ Module::Packaged::Generator::Distribution - base class for all distribution driv
 
 =head1 VERSION
 
-version 1.100091
+version 1.100240
 
 =head1 DESCRIPTION
 
@@ -68,3 +68,4 @@ the same terms as the Perl 5 programming language system itself.
 
 
 __END__
+
