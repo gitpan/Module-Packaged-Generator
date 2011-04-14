@@ -1,15 +1,22 @@
 #!/usr/bin/perl
-# 
+#
 # This file is part of Module-Packaged-Generator
-# 
+#
 # This software is copyright (c) 2010 by Jerome Quelin.
-# 
+#
 # This is free software; you can redistribute it and/or modify it under
 # the same terms as the Perl 5 programming language system itself.
-# 
+#
 
+use 5.010;
 use strict;
 use warnings;
+
+package main;
+BEGIN {
+  $main::VERSION = '1.111040';
+}
+# ABSTRACT: create db of available Perl modules
 
 use File::Spec::Functions qw{ catdir updir };
 use Term::ProgressBar::Quiet;
@@ -41,6 +48,8 @@ print "found a distribution driver: $driver\n";
 ( my $dist = $driver ) =~ s/^.*:://;
 my $file = "cpan_$dist.db";
 my $dbh  = Module::Packaged::Generator->create_db($file);
+$dbh->{AutoCommit} = 0;
+$dbh->{RaiseError} = 1;
 
 
 # fetch the list of available perl modules
@@ -54,12 +63,13 @@ my $sth = $dbh->prepare("
         VALUES        (?,?,?,?);
 ");
 my $prefix = "inserting modules in db";
-my $progress = Term::ProgressBar->new( {
+my $progress = Term::ProgressBar::Quiet->new( {
     count     => scalar(@modules),
     bar_width => 50,
     remove    => 1,
     name      => $prefix,
 } );
+$progress->minor(0);  # we're so fast now that we don't need minor scale
 my $next_update = 0;
 foreach my $i ( 0 .. $#modules ) {
     my $m = $modules[$i];
@@ -83,23 +93,44 @@ print "done\n";
 
 
 # all's done, close the db
+$dbh->commit;
 $dbh->disconnect;
 
 exit;
-__END__
+
+
+=pod
 
 =head1 NAME
 
-pkgcpan - create db of available Perl modules
+main - create db of available Perl modules
 
+=head1 VERSION
+
+version 1.111040
 
 =head1 SYNOPSIS
 
     pkgcpan
 
-
 =head1 DESCRIPTION
 
 This script will create and populate a sqlite database with the
 available Perl modules for your distribution.
+
+=head1 AUTHOR
+
+Jerome Quelin
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2010 by Jerome Quelin.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut
+
+
+__END__
 

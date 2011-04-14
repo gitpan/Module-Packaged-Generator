@@ -1,51 +1,51 @@
-# 
+#
 # This file is part of Module-Packaged-Generator
-# 
+#
 # This software is copyright (c) 2010 by Jerome Quelin.
-# 
+#
 # This is free software; you can redistribute it and/or modify it under
 # the same terms as the Perl 5 programming language system itself.
-# 
+#
 use 5.008;
 use strict;
 use warnings;
 
 package Module::Packaged::Generator::Module;
-our $VERSION = '1.100240';
+BEGIN {
+  $Module::Packaged::Generator::Module::VERSION = '1.111040';
+}
 # ABSTRACT: a class representing a perl module
 
-use File::HomeDir qw{ my_home };
+use File::HomeDir::PathClass qw{ my_home };
 use Moose;
 use MooseX::Has::Sugar;
-use Parse::CPAN::Packages;
+use Parse::CPAN::Packages::Fast;
 use Path::Class;
 
 
 # -- attributes
 
 
-has name    => ( ro, isa=>'Str', required          );
+has name    => ( ro, isa=>'Str',        required   );
 has version => ( ro, isa=>'Maybe[Str]'             );
 has dist    => ( ro, isa=>'Maybe[Str]', lazy_build );
-has pkgname => ( ro, isa=>'Str', required          );
+has pkgname => ( ro, isa=>'Str',        required   );
 
-
-# -- initializers & builders
-
+my $CPAN;
 {
-    my $pkgfile = file( my_home(), '.cpanplus', '02packages.details.txt.gz' );
-    if ( -f $pkgfile ) {
-        my $cpan = Parse::CPAN::Packages->new("$pkgfile");
-        *_build_dist = sub {
-            my $self = shift;
-            my $pkg = $cpan->package( $self->name );
-            return unless $pkg;
-            return $pkg->distribution->dist;
-        }
-    } else {
-        warn "couldn't find a cpanplus index in $pkgfile\n";
-        *_build_dist = sub { return };
-    }
+    # try to locate cpanplus index
+    my $pkgfile = my_home()->file( '.cpanplus', '02packages.details.txt.gz' );
+    die "couldn't find a cpanplus index in $pkgfile\n"
+        unless -f $pkgfile;
+    $CPAN = Parse::CPAN::Packages::Fast->new($pkgfile->stringify);
+}
+
+sub _build_dist {
+    my $self = shift;
+    my $pkg;
+    eval { $pkg = $CPAN->package( $self->name ); };
+    return unless $pkg;
+    return $pkg->distribution->dist;
 }
 
 1;
@@ -59,7 +59,7 @@ Module::Packaged::Generator::Module - a class representing a perl module
 
 =head1 VERSION
 
-version 1.100240
+version 1.111040
 
 =head1 DESCRIPTION
 
@@ -90,12 +90,12 @@ L<CPANPLUS> work directory. It will be eg C<Foo-Bar>.
 =head2 pkgname
 
 This is the name of the package holding this module in the Linux
-distribution. Chances are that it looks like C<perl-Foo-Bar> on
-Mandriva, C<libfoo-bar-perl> on Debian, etc. It's required.
+distribution. Chances are that it looks like C<perl-Foo-Bar> on Mageia
+or Mandriva, C<libfoo-bar-perl> on Debian, etc. It's required.
 
 =head1 AUTHOR
 
-  Jerome Quelin
+Jerome Quelin
 
 =head1 COPYRIGHT AND LICENSE
 

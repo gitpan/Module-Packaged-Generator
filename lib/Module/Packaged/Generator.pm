@@ -1,17 +1,19 @@
-# 
+#
 # This file is part of Module-Packaged-Generator
-# 
+#
 # This software is copyright (c) 2010 by Jerome Quelin.
-# 
+#
 # This is free software; you can redistribute it and/or modify it under
 # the same terms as the Perl 5 programming language system itself.
-# 
+#
 use 5.008;
 use strict;
 use warnings;
 
 package Module::Packaged::Generator;
-our $VERSION = '1.100240';
+BEGIN {
+  $Module::Packaged::Generator::VERSION = '1.111040';
+}
 # ABSTRACT: build list of modules packaged by a linux distribution
 
 use DBI;
@@ -64,7 +66,7 @@ Module::Packaged::Generator - build list of modules packaged by a linux distribu
 
 =head1 VERSION
 
-version 1.100240
+version 1.111040
 
 =head1 DESCRIPTION
 
@@ -78,18 +80,24 @@ crazy manipulation with this data, we just provide the data :-)
 
 =head1 METHODS
 
-=head2 my @drivers = Module::Packaged::Generator->all_drivers();
+=head2 all_drivers
+
+    my @drivers = Module::Packaged::Generator->all_drivers();
 
 Return a list of all available drivers supporting a distribution. The
 list is a list of module names (strings) such as
 L<Module::Packaged::Generator::Mandriva>.
 
-=head2 my $driver = Module::Packaged::Generator->find_driver;
+=head2 find_driver
+
+    my $driver = Module::Packaged::Generator->find_driver;
 
 Return a driver that can be used on the current machine, or undef if no
 suitable driver was found.
 
-=head2 my $dbh = Module::Packaged::Generator->create_db($file);
+=head2 create_db
+
+    my $dbh = Module::Packaged::Generator->create_db($file);
 
 Creates a sqlite database with the correct schema. Remove the previous
 C<$file> if it exists. Return the handler on the opened database.
@@ -124,7 +132,7 @@ L<http://cpanratings.perl.org/d/Module-Packaged-Generator>
 
 =head1 AUTHOR
 
-  Jerome Quelin
+Jerome Quelin
 
 =head1 COPYRIGHT AND LICENSE
 

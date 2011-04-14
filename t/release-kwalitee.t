@@ -1,12 +1,12 @@
 #!perl
-# 
+#
 # This file is part of Module-Packaged-Generator
-# 
+#
 # This software is copyright (c) 2010 by Jerome Quelin.
-# 
+#
 # This is free software; you can redistribute it and/or modify it under
 # the same terms as the Perl 5 programming language system itself.
-# 
+#
 
 BEGIN {
   unless ($ENV{RELEASE_TESTING}) {
@@ -18,6 +18,6 @@ BEGIN {
 
 use Test::More;
 
-eval "use Test::CPAN::Meta";
-plan skip_all => "Test::CPAN::Meta required for testing META.yml" if $@;
-meta_yaml_ok();
+eval "use Test::Kwalitee";
+plan skip_all => "Test::Kwalitee required for testing kwalitee"
+  if $@;
